@@ -35,7 +35,10 @@ def select_category():
 def choose_category():
     """Return the name of the selected category."""
     cat_index = select_category()
-    if cat_index == None:
+    if cat_index is None:
+        system("cls")
+        print("No se ha seleccionado ninguna categoría.")
+        input("Pulse Enter para volver al menú...")
         return None
     categories = get_categories()
     category_name = categories[cat_index - 1]
@@ -55,8 +58,9 @@ def select_recipe(category_name: str):
     """Display recipes inside a category and allow the user to choose one."""
     recipes = get_recipes(category_name)
     if not recipes:
-        print("No hay recetas disponibles...")
         system("cls")
+        print("No hay recetas disponibles...")
+        input("Pulse Enter para volver...")
         return None
     option = ""
     while not option.isdigit() or not (0 <= int(option) <= len(recipes)):
@@ -70,6 +74,9 @@ def select_recipe(category_name: str):
             print("\nOpción inválida. Intente de nuevo.")
     option = int(option)
     if option == 0:
+        system("cls")
+        print("No se ha seleccionado ninguna receta.")
+        input("Pulse Enter para volver...")
         return None
     return recipes[option - 1]
 
@@ -152,21 +159,15 @@ while True:
         case 1:
             category_name = choose_category()
             if category_name is None:
-                print("No se ha seleccionado ninguna categoría.")
-                input("Pulse Enter para volver al menú...")
                 continue
             recipe_name = select_recipe(category_name)
             if recipe_name is None:
-                print("No se ha seleccionado ninguna receta.")
-                input("Pulse Enter para volver...")
                 continue
             open_recipe(category_name, recipe_name)
         ##NEW RECIPE
         case 2:
             category_name = choose_category()
             if category_name is None:
-                print("No se ha seleccionado ninguna categoría.")
-                input("Pulse Enter para volver al menú...")
                 continue
             new_recipe_name = input("Ingrese el nombre del receta: ")
             if recipe_exist(category_name, new_recipe_name):
@@ -175,12 +176,15 @@ while True:
                 continue
             create_recipe(category_name, new_recipe_name)
             continue
+        #CREATE NEW DIRECTORY
         case 3:
-            select_category()
+            category_name = choose_category()
+            if category_name is None:
+                continue
         case 4:
-            select_category()
+            continue
         case 5:
-            select_category()
+            continue
         # OPTION 6 EXIT PROGRAM
         case 6:
             print("Saliendo del programa...")
