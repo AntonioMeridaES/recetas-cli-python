@@ -7,7 +7,7 @@ from os import system
 def get_categories():
     """Return a list of category folder names inside the Recetas directory."""
     base_path = Path(Path.home(), "Recetas")
-    #dynamic list of folders
+    # dynamic list of folders
     categories = [c.name for c in base_path.iterdir() if c.is_dir()]
     return categories
 
@@ -75,6 +75,7 @@ def open_recipe(category_name: str, recipe_name: str):
         print("\n=== Fin de la receta ===\n")
     input("Pulse Enter para volver...")
 
+
 def create_recipe(category_name: str, recipe_name: str):
     '''Create a new recipe inside a given category.'''
     base_path = Path(Path.home(), "Recetas")
@@ -131,21 +132,23 @@ while True:
                 input("Pulse Enter para volver...")
                 continue
             open_recipe(category_name, recipe_name)
+        ##NEW RECIPE
         case 2:
-            ##NEW RECIPE
             category_name = choose_category()
             if category_name is None:
                 print("No se ha seleccionado ninguna categoría.")
                 input("Pulse Enter para volver al menú...")
                 continue
-            recipe_name = select_recipe(category_name)
+            new_recipe_name = input("Ingrese el nombre del receta: ")
+            create_recipe(category_name, new_recipe_name)
+            continue
         case 3:
             select_category()
         case 4:
             select_category()
         case 5:
             select_category()
-    # Opcion 6 salimos del programa.
-    if num_option == 6:
-        print("Saliendo del programa...")
-        break
+        # OPTION 6 EXIT PROGRAM
+        case 6:
+            print("Saliendo del programa...")
+            break
