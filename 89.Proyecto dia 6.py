@@ -181,6 +181,7 @@ while True:
             category_name = choose_category()
             if category_name is None:
                 continue
+
         case 4:
             continue
         case 5:
