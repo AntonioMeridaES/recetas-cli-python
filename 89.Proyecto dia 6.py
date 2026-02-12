@@ -75,6 +75,14 @@ def open_recipe(category_name: str, recipe_name: str):
         print("\n=== Fin de la receta ===\n")
     input("Pulse Enter para volver...")
 
+def create_recipe(category_name: str, recipe_name: str):
+    '''Create a new recipe inside a given category.'''
+    base_path = Path(Path.home(), "Recetas")
+    recipe_path = base_path / category_name
+    with open(recipe_path, "w", encoding="utf-8") as recipe_file:
+        system("cls")
+        print(f"=== {recipe_name} ===\n")
+
 
 # ============================ # OTHER METHODS# ============================
 
@@ -124,8 +132,13 @@ while True:
                 continue
             open_recipe(category_name, recipe_name)
         case 2:
-            ##NEW CATEGORY
-            select_category()
+            ##NEW RECIPE
+            category_name = choose_category()
+            if category_name is None:
+                print("No se ha seleccionado ninguna categoría.")
+                input("Pulse Enter para volver al menú...")
+                continue
+            recipe_name = select_recipe(category_name)
         case 3:
             select_category()
         case 4:
