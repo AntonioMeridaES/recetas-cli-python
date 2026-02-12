@@ -1,5 +1,7 @@
-from pathlib import Path
+from linecache import clearcache
 from os import system
+from pathlib import Path
+from xml.dom.minidom import ProcessingInstruction
 
 
 # ============================ # CATEGORY  METHODS # ============================
@@ -30,6 +32,14 @@ def select_category():
         return None
     return option
 
+def choose_category():
+    """Return the name of the selected category."""
+    cat_index = select_category()
+    if cat_index == None:
+        return None
+    categories = get_categories()
+    category_name = categories[cat_index - 1]
+    return category_name
 
 # ============================ # RECIPE METHODS# ============================
 
@@ -75,33 +85,52 @@ def open_recipe(category_name: str, recipe_name: str):
         print("\n=== Fin de la receta ===\n")
     input("Pulse Enter para volver...")
 
+def recipe_exist(category_name: str, recipe_name: str):
+    """Return True if the recipe exists, False otherwise."""
+    recipes = get_recipes(category_name)
+    for recipe in recipes:
+        if recipe.lower() == f"{recipe_name}.txt".lower():
+            return True
+    return False
 
 def create_recipe(category_name: str, recipe_name: str):
     '''Create a new recipe inside a given category.'''
     base_path = Path(Path.home(), "Recetas")
-    recipe_path = base_path / category_name
+    recipe_path = base_path / category_name / f"{recipe_name}.txt"
+    system("cls")
+    print(f"=== Creando receta: {recipe_name} ===\n")
+    print("Escribe la receta. Cuando termines, escribe 'FIN' y pulsa Enter.\n")
     with open(recipe_path, "w", encoding="utf-8") as recipe_file:
-        system("cls")
-        print(f"=== {recipe_name} ===\n")
-
-
+        while True:
+            line = input("")
+            if line.upper() == "FIN":
+                break
+            recipe_file.write(line + "\n")
+    system("cls")
+    print("\nReceta guardada correctamente.")
+    input("Pulse Enter para volver al menú...")
 # ============================ # OTHER METHODS# ============================
-
-def choose_category():
-    """Return the name of the selected category."""
-    cat_index = select_category()
-    if cat_index == None:
-        return None
-    categories = get_categories()
-    category_name = categories[cat_index - 1]
-    return category_name
 
 
 # ============================ # MAIN PROGRAM  # ============================
 
 while True:
-    system("cls")  # Clear windows
-    print("Elige una opción:\n"
+    # CLEAR WINDOWS
+    system("cls")
+    #WELCOME
+    base_path = Path(Path.home(), "Recetas")
+    print("=== Bienvenido Usuario===")
+    print(f"La ruta de carpetas es {base_path}")
+    # ALL RECIPES
+    print(f"El total de recetas es de {len(list(base_path.rglob("*.txt")))}")
+    #RECIPES BY CATEGORY
+    print("\nRecetas disponibles por categoria:")
+    for category in get_categories():
+        category_path= base_path / category
+        count = len(list(category_path.glob("*.txt")))
+        print(f"{category}: {count}")
+    #MAIN MENU
+    print("\nElige una opción:\n"
           "1-Leer receta.\n"
           "2-Crear receta.\n"
           "3-Crear categoría.\n"
@@ -110,12 +139,12 @@ while True:
           "6-Salir.\n"
           )
     num_option = input("Usted ha seleccionado ")
-    # Check number bad option
+    # CHECK NUMBER BAD OPTION
     if not num_option.isdigit() or not (1 <= int(num_option) <= 6):
         system("cls")  # Clear windows
         print("La opcion seleccionada no es valida, debera de ser un numero entre 1 y 6, vuelva a intentarlo.\n")
         continue
-    # Become  INT
+    # BECOME num_option to INT
     num_option = int(num_option)
 
     match num_option:
@@ -140,6 +169,10 @@ while True:
                 input("Pulse Enter para volver al menú...")
                 continue
             new_recipe_name = input("Ingrese el nombre del receta: ")
+            if recipe_exist(category_name, new_recipe_name):
+                print("El receta ya existe!")
+                input("Pulse Enter para volver...")
+                continue
             create_recipe(category_name, new_recipe_name)
             continue
         case 3:
