@@ -1,7 +1,6 @@
 from linecache import clearcache
-from os import system
+from os import system, mkdir
 from pathlib import Path
-from xml.dom.minidom import ProcessingInstruction
 
 
 # ============================ # CATEGORY  METHODS # ============================
@@ -17,7 +16,7 @@ def get_categories():
 def select_category():
     """Display categories and allow the user to choose one."""
     categories = get_categories()
-    option = ""  # Starts empty
+    option = ""  #  STARTS EMPTY
     while not option.isdigit() or not (0 <= int(option) <= len(categories)):
         print("Indíquenos una de estas opciones:")
         print("\n0 - Volver atrás")
@@ -43,6 +42,20 @@ def choose_category():
     categories = get_categories()
     category_name = categories[cat_index - 1]
     return category_name
+
+def category_exist(category_name: str):
+    """Return True if the category exists, False otherwise."""
+    base_path = Path(Path.home(), "Recetas")
+    category_path = base_path / category_name
+    return category_path.is_dir()
+
+def create_category(category_name: str):
+    """Create a new category inside the Recetas directory."""
+    base_path = Path(Path.home(), "Recetas")
+    mkdir(base_path / category_name)
+    system("cls")
+    print(f"La carpera {category_name} fue creada con éxito.")
+    input("Pulse Enter para volver...")
 
 # ============================ # RECIPE METHODS# ============================
 
@@ -155,8 +168,8 @@ while True:
     num_option = int(num_option)
 
     match num_option:
-        # OPEN RECIPE
         case 1:
+            #OPEN RECIPE
             category_name = choose_category()
             if category_name is None:
                 continue
@@ -164,24 +177,28 @@ while True:
             if recipe_name is None:
                 continue
             open_recipe(category_name, recipe_name)
-        ##NEW RECIPE
+
         case 2:
+            #NEW RECIPE
             category_name = choose_category()
             if category_name is None:
                 continue
-            new_recipe_name = input("Ingrese el nombre del receta: ")
+            new_recipe_name = input("Ingrese el nombre de la receta: ")
             if recipe_exist(category_name, new_recipe_name):
-                print("El receta ya existe!")
+                print("La receta ya existe!")
                 input("Pulse Enter para volver...")
                 continue
             create_recipe(category_name, new_recipe_name)
             continue
-        #CREATE NEW DIRECTORY
         case 3:
-            category_name = choose_category()
-            if category_name is None:
+            #NEW DIRECTORY
+            new_category = input("Ingrese el nombre de la nueva categoria de recetas: ")
+            if category_exist(new_category):
+                print("La categoria ya existe!")
+                input("Pulse Enter para volver...")
                 continue
-
+            create_category(new_category)
+            continue
         case 4:
             continue
         case 5:
